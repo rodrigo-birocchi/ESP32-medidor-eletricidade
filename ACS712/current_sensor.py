@@ -22,6 +22,14 @@ def auto_zero():
 
 # Faz a leitura do valor atual da corrente
 def valor():
+
+    # Sem divisor de tensão (Sensor out = 2500 mV)
+    # valor = pot.read() * 0.805
+    # zerado = valor - 2250
+    # amps = zerado / 185
+    # print("Amps: " + str(round(amps, 1)) + " mV cal: " + str(round(zerado, 1)) + " real: " + str(valor))
+
+    # Com divisor de tensão (Sensor out = 1650 mV)
     valor = leitura()
     zerado = (valor - ZERO_SENSOR)
     amps = zerado / 122
