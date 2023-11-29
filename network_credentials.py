@@ -1,8 +1,8 @@
 import network
 
 
-SSID = "Rodrigo"
-PASS = "d9jkrtwdkxe4anq"
+SSID = ""
+PASS = ""
 
 print("Starting network...")
 

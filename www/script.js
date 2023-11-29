@@ -54,5 +54,6 @@ anychart.onDocumentReady(function () {
     window.setInterval(function () {
         update(dataSet, indexSetter);
         indexSetter++;
-    }, 1000);
+    }, 500);
 });
+
