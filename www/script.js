@@ -60,6 +60,6 @@ anychart.onDocumentReady(function () {
     window.setInterval(function () {
         update(dataSet, indexSetter);
         indexSetter++;
-    }, 20000);
+    }, 500);
 });
 
