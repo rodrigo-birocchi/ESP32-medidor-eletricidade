@@ -1,10 +1,11 @@
 from Medidor import medidor as med
 import json
 from microWebSrv import MicroWebSrv
+from ACS712 import current_sensor as cs
 
 def _httpHandlerInstantPowerValueGet(httpClient, httpResponse):
     data = {
-        "value": med.potencia_atual()    
+        "value": cs.valor()  
     }
     data = json.dumps(data)
 
