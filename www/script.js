@@ -9,9 +9,15 @@ async function update(data, i){
             x: i,
             value: convertido.value
         });
-
         data.remove(0);
+
+        update_valor_atual(convertido.value);
     });
+}
+
+function update_valor_atual(n) {
+    const valor_atual = document.getElementById("valor-atual");
+    valor_atual.innerHTML = n;
 }
 
 anychart.onDocumentReady(function () {
@@ -36,13 +42,13 @@ anychart.onDocumentReady(function () {
 
     // create the series and name it
     var series = chart.line(seriesData);
-    series.name("ACS712");
+    // series.name("ACS712");
 
     // add a legend
-    chart.legend().enabled(true);
+    // chart.legend().enabled(true);
 
     // add a title
-    chart.title("Leitura ACS712");
+    // chart.title("Leitura ACS712");
 
     // specify where to display the chart
     chart.container("container");
@@ -54,6 +60,6 @@ anychart.onDocumentReady(function () {
     window.setInterval(function () {
         update(dataSet, indexSetter);
         indexSetter++;
-    }, 500);
+    }, 20000);
 });
 
