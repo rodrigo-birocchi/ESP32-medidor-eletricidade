@@ -22,6 +22,7 @@ body {
 header {
     background-color: #003566;
     color: #ffc300;
+    padding: 0.5em;
     padding-left: 2.5em;
     padding-right: 5em;
     display: flex;
@@ -93,7 +94,7 @@ header {
   }
   
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #ffc300;
   }
   
   input:focus + .slider {
@@ -113,4 +114,11 @@ header {
   
   .slider.round:before {
     border-radius: 50%;
+  }
+
+  #start-stop-menu {
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }

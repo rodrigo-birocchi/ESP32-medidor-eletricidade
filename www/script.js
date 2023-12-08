@@ -1,4 +1,5 @@
-// Updates the data with the latest value and shift data set forward 
+// Atualiza a lista de dados e move os dados uma unidade para frente
+// (Adiciona um dado no fim da lista e remove o primeiro do início da lista)
 async function update(data, i){
 
     const numero = fetch('http://' + window.location.hostname + '/value')
@@ -15,14 +16,16 @@ async function update(data, i){
     });
 }
 
+// Escreve o valor atual de medição na tela
 function update_valor_atual(n) {
     const valor_atual = document.getElementById("valor-atual");
     valor_atual.innerHTML = n;
 }
 
+// Inicia o desenho do gráfico
 anychart.onDocumentReady(function () {
 
-    // create list to store the last 20s of data
+    // Lista para guardar os últimos 20 valores
     var data = [
         ["20", 0],["19", 0],["18", 0],["17", 0],
         ["16", 0],["15", 0],["14", 0],["13", 0],
@@ -31,35 +34,29 @@ anychart.onDocumentReady(function () {
         ["4", 0],["3", 0],["2", 0],["1", 0]
     ];
 
-    // create a data set
+    // Criar um dataset
     var dataSet = anychart.data.set(data);
 
-    // map the data for series
+    // Mapear o dataset para uma curva no gráfico
     var seriesData = dataSet.mapAs({x: 0, value: 1});
 
-    // create a line chart
+    // Cria um gráfico de linha
     var chart = anychart.line();
 
-    // create the series and name it
+    // Cria uma série de dados 
     var series = chart.line(seriesData);
-    // series.name("ACS712");
 
-    // add a legend
-    // chart.legend().enabled(true);
-
-    // add a title
-    // chart.title("Leitura ACS712");
-
-    // specify where to display the chart
+    // Especifica o elemento onde o gráfico deve ser renderizado
     chart.container("container");
 
-    // draw the resulting chart
+    // Renderiza o gráfico
     chart.draw();
 
+    // Atualiza o gráfico com novos dados periodicamente
     var indexSetter = 0;
     window.setInterval(function () {
         update(dataSet, indexSetter);
         indexSetter++;
-    }, 20000);
+    }, 500);
 });
 
