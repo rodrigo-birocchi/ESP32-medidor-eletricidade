@@ -117,8 +117,13 @@ header {
   }
 
   #start-stop-menu {
-    width: 20%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
+    margin-left: 1em;
+
+    span {
+      padding: 0.5em;
+    }
   }

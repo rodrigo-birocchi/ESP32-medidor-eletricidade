@@ -1,3 +1,11 @@
+// Tratar liga e desliga do medidor
+var estadoAtual = -1;
+const onOffSwitch = document.getElementById("on-off-switch");
+onOffSwitch.addEventListener("click", function () {
+    estadoAtual *= -1;
+    console.log(estadoAtual);
+});
+
 // Atualiza a lista de dados e move os dados uma unidade para frente
 // (Adiciona um dado no fim da lista e remove o primeiro do início da lista)
 async function update(data, i){
@@ -55,8 +63,11 @@ anychart.onDocumentReady(function () {
     // Atualiza o gráfico com novos dados periodicamente
     var indexSetter = 0;
     window.setInterval(function () {
-        update(dataSet, indexSetter);
-        indexSetter++;
+
+        if (estadoAtual == 1) {
+            update(dataSet, indexSetter);
+            indexSetter++;
+        }
     }, 500);
 });
 
