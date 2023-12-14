@@ -49,7 +49,7 @@ O ESP32 conta com um conversor analógico digital com capacidade de medir sinais
 
 ### Exemplo de montagem
 
-## Software
+## Software | Visão Geral
 
 Foi definido que o ESP32 ficaria responsável por executar um programa Python capaz de realizar as medições do sensor de corrente. Para isso, foi necessário instalar o MicroPython no ESP32. Para o desenvolvimento do programa, foi escolhida a IDE Thonny, por sua simplicidade e facilidade de interface com o ESP32 (É necessário instalar na IDE o plug-in do ESP32 o que pode ser feito através da ferramente interna da IDE).
 
@@ -64,5 +64,24 @@ http://ip_do_ESP32_na_rede/valor
 
 A página web (medidor.html) ao ser acessada pelo usuário, inicialmente não realiza requisições. Ao acionar o botão on/off na página, a mesma inicia o envio de requisições HTTP para o endereço supramencionado do ESP32 e ao receber os dados da medição instantânea do sensor, os adiciona ao gráfico de linha central na página.
 
+Mais abaixo é é detalhado os principais pontos e arquivos.
+
 ![Página inicial do projeto](assets/Screenshot_20231208_195526.png)
 
+### Software | wwww/medidor.html
+
+Contém página web contendo como principais elementos: botão on/off, que quando on realiza a medição de corrente através dos sensores. Gráfico com a medição de corrente produzido através da biblioteca anychart (ver mais em: https://www.anychart.com/). Link para o github do projeto (https://github.com/rodrigo-birocchi/ESP32-medidor-eletricidade).
+
+### Software | wwww/script.js
+
+Arquivo responsável pela inclusão do gráfico e sua atualização na interface, baseado no retorno da chamada a API inclusa no mesmo arquivo, que retorna por sua vez a medição. No método window.setInterval(), é possível configurar a frequência de medição em milissegundos.
+
+### Software | ACS721/current_sensor.py
+
+Feito em python, contém de fato a medição e gestão do sensor.
+
+leitura(): realiza a leitura analógica, conforme o datasheet do sensor.
+
+auto_zero(): encontra o zero do sensor, isto é, ausência de corrente.
+
+valor(): retorna corrente em ampéres, conforme especificações acima.
