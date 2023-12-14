@@ -68,11 +68,11 @@ Mais abaixo é é detalhado os principais pontos e arquivos.
 
 ![Página inicial do projeto](assets/Screenshot_20231208_195526.png)
 
-### Software - ./wwww/medidor.html
+### Software - ./www/medidor.html
 
 Contém página web contendo como principais elementos: botão on/off, que quando on realiza a medição de corrente através dos sensores. Gráfico com a medição de corrente produzido através da biblioteca anychart (ver mais em: https://www.anychart.com/). Link para o github do projeto (https://github.com/rodrigo-birocchi/ESP32-medidor-eletricidade).
 
-### Software - ./wwww/script.js
+### Software - ./www/script.js
 
 Arquivo responsável pela inclusão do gráfico e sua atualização na interface. Inclui também chamada a API, que por sua vez retorna a medição. No método window.setInterval(), é possível configurar a frequência de medição em milissegundos.
 
