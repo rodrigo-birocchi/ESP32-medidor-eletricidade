@@ -4,13 +4,30 @@ const onOffSwitch = document.getElementById("on-off-switch");
 onOffSwitch.addEventListener("click", function () {
     estadoAtual *= -1;
     console.log(estadoAtual);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://' + '192.168.0.23' + '/estado', true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    dados = 'estado=' + estadoAtual;
+
+    xhr.send(dados);
+
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            console.log("Resposta: ", xhr.responseText);
+        } else {
+            console.error("Erro na requisição: ", xhr.statusText);
+        }
+    };
 });
+
 
 // Atualiza a lista de dados e move os dados uma unidade para frente
 // (Adiciona um dado no fim da lista e remove o primeiro do início da lista)
 async function update(data, i){
 
-    const numero = fetch('http://' + window.location.hostname + '/value')
+    const numero = fetch('http://' + '192.168.0.23' + '/value')
     .then(response => response.json())
     .then(convertido => {
         
@@ -70,4 +87,5 @@ anychart.onDocumentReady(function () {
         }
     }, 500);
 });
+
 
