@@ -6,7 +6,7 @@ onOffSwitch.addEventListener("click", function () {
     console.log(estadoAtual);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://' + '192.168.0.23' + '/estado', true);
+    xhr.open("POST", 'http://' + window.location.hostname + '/estado', true);
     xhr.setRequestHeader("Content-Type", "application/json");
 
     dados = 'estado=' + estadoAtual;
@@ -27,7 +27,7 @@ onOffSwitch.addEventListener("click", function () {
 // (Adiciona um dado no fim da lista e remove o primeiro do início da lista)
 async function update(data, i){
 
-    const numero = fetch('http://' + '192.168.0.23' + '/value')
+    const numero = fetch('http://' + window.location.hostname + '/value')
     .then(response => response.json())
     .then(convertido => {
         
