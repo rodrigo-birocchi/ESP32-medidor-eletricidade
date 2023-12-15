@@ -4,12 +4,17 @@ const onOffSwitch = document.getElementById("on-off-switch");
 onOffSwitch.addEventListener("click", function () {
     estadoAtual *= -1;
     console.log(estadoAtual);
+    enviaEstado(estadoAtual);
+});
+
+// Solicita um estado (ON/OFF) ao controlador 
+function enviaEstado(estado) {
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", 'http://' + window.location.hostname + '/estado', true);
     xhr.setRequestHeader("Content-Type", "application/json");
 
-    dados = 'estado=' + estadoAtual;
+    dados = 'estado=' + estado;
 
     xhr.send(dados);
 
@@ -20,8 +25,7 @@ onOffSwitch.addEventListener("click", function () {
             console.error("Erro na requisição: ", xhr.statusText);
         }
     };
-});
-
+}
 
 // Atualiza a lista de dados e move os dados uma unidade para frente
 // (Adiciona um dado no fim da lista e remove o primeiro do início da lista)
@@ -38,7 +42,21 @@ async function update(data, i){
         data.remove(0);
 
         update_valor_atual(convertido.value);
+        verifica_valor(convertido.value);
     });
+}
+
+// Verifica se o valor atual da medição está dentro do limite do medidor
+function verifica_valor(valor) {
+    
+    const LIMITE = 1.1;
+    
+    if (valor > LIMITE) {
+        enviaEstado(-1);
+        onOffSwitch.checked = !onOffSwitch.checked;
+        estadoAtual = -1;
+        alert("Medidor desligado por sobrecorrente");
+    }
 }
 
 // Escreve o valor atual de medição na tela
@@ -87,5 +105,3 @@ anychart.onDocumentReady(function () {
         }
     }, 500);
 });
-
-

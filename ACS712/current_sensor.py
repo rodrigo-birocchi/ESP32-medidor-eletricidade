@@ -36,4 +36,3 @@ pot.atten(ADC.ATTN_11DB) # amplitude total do sinal 3,3V
 
 # Calibra valores do sensor 
 ZERO_SENSOR = auto_zero()
-
