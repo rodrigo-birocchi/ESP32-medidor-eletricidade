@@ -1,3 +1,5 @@
+var LIMITE = 1.1;
+
 // Tratar liga e desliga do medidor
 var estadoAtual = -1;
 const onOffSwitch = document.getElementById("on-off-switch");
@@ -5,6 +7,12 @@ onOffSwitch.addEventListener("click", function () {
     estadoAtual *= -1;
     console.log(estadoAtual);
     enviaEstado(estadoAtual);
+});
+
+// Tratar valor limiar
+const btnSubmit = document.getElementById("btn-valor-atual");
+btnSubmit.addEventListener("click", function () {
+    LIMITE = parseFloat(document.getElementById("novo-valor").value);
 });
 
 // Solicita um estado (ON/OFF) ao controlador 
@@ -48,9 +56,7 @@ async function update(data, i){
 
 // Verifica se o valor atual da medição está dentro do limite do medidor
 function verifica_valor(valor) {
-    
-    const LIMITE = 1.1;
-    
+        
     if (valor > LIMITE) {
         enviaEstado(-1);
         onOffSwitch.checked = !onOffSwitch.checked;
