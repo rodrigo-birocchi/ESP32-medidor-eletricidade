@@ -6,9 +6,10 @@ Repositório criado para disponibilização do código e documentação do proje
 
 1. ESP32 microcontrolador
 2. Sensor de corrente Allegro ACS712-05
-3. Resistores e resistor variável
+3. Resistor 10KΩ e resistor variável
 4. Placa de prototipagem
 5. Conectores jumper
+6. Módulo de relé
 
 ## Conceito
 
@@ -16,9 +17,13 @@ A ideia central do projeto é obter a leituras do sensor de corrente e então fo
 
 ## Montagem
 
-1. Pino VCC do ACS712 é conectado ao VCC do ESP32
-2. Pino GND do ACS712 é conectado a um dos pinos GND do ESP32
-3. Pino OUT do ACS712 é conectado ao divisor de tensão (explicação a seguir) e então ao ESP32
+1. Pino Vin (5V) e pino GND do ESP32 são conectados aos barramentos de energia da placa de prototipagem.
+2. Pino VCC e GND do ACS712 são conectados ao barramento positivo e negativo da placa respctivamente.
+3. Pino VCC e GND do módulo de relé são conectados ao barramento positivo e negativo da placa respctivamente.
+4. Pino de controle do módulo de relé é conectado ao pino 26 do ESP32.
+5. Pino OUT do ACS712 é conectado ao pino 34 do ESP32, passando primeiro pelo divisor de tensão, como explicado a seguir.
+6. O ACS712 e o módulo de relé tem as seus conectores de medição ligados em série um com o outro.
+7. A carga a ser medida é ligada em série com o medidor, conforme o esquema do circuíto a seguir.
 
 ### Divisor de tensão
 
@@ -45,13 +50,15 @@ Produzindo assim a redução necessária. Além disso, de acordo com a folha de 
 
 ### Conversor analógico digital
 
-O ESP32 conta com um conversor analógico digital com capacidade de medir sinais de amplitude 0-3,3V. A arquitetura do ESP32 é de 12 bits e por essa razão, pode representar números inteiros entre 0 e 4096. Assim, intenamente, um sinal recebido em um pino do ESP32 será representado, de acordo com a sua intensida, em uma escala de 0 a 4095. Com sinal de intensidade 0V sendo lidos como 0 e sinais de intensidade 3,3V sendo representados como 4095. Os valores intermediários são proporcionalmente representados na escala dessa forma. Por isso, para se obter o valor da intensidade do sinal recebido do sensor em volts é necessário multiplicar os valores brutos lidos pelo ESP32 por 0,805.
+O ESP32 conta com um conversor analógico digital (ADC) com capacidade de medir sinais de amplitude 0-3,3V. A arquitetura do ADC é de 12 bits e por essa razão, pode representar números inteiros entre 0 e 4096. Assim, um sinal recebido em um pino do ESP32 será representado, de acordo com a sua intensida, em uma escala de 0 a 4095. Com sinal de intensidade 0V sendo lido como 0 e sinais de intensidade 3,3V sendo representados como 4095. Os valores intermediários são proporcionalmente representados na escala dessa forma. Por isso, para se obter o valor da intensidade do sinal recebido do sensor em volts é necessário multiplicar os valores brutos lidos pelo ESP32 por 0,805.
 
-### Exemplo de montagem
+### Esquema de montagem
+
+![Esquema de montagem do circuito](assets/esquema_eletrico.jpg)
 
 ## Software | Visão Geral
 
-Foi definido que o ESP32 ficaria responsável por executar um programa Python capaz de realizar as medições do sensor de corrente. Para isso, foi necessário instalar o MicroPython no ESP32. Para o desenvolvimento do programa, foi escolhida a IDE Thonny, por sua simplicidade e facilidade de interface com o ESP32 (É necessário instalar na IDE o plug-in do ESP32 o que pode ser feito através da ferramente interna da IDE).
+Foi definido que o ESP32 ficá responsável por executar um programa Python capaz de realizar as medições do sensor de corrente. Para isso, foi necessário instalar o MicroPython no ESP32. Para o desenvolvimento do programa, foi escolhida a IDE Thonny, por sua simplicidade e facilidade de interface com o ESP32 (É necessário instalar na IDE o plug-in do ESP32 o que pode ser feito através da ferramente interna da IDE).
 
 No ESP32 foi armazenado o código fonte do projeto MicroWevSrv, disponível em: https://github.com/jczic/MicroWebSrv.git
 Esse servidor é capaz de realizar as funções necessárias para o projeto:
@@ -59,22 +66,30 @@ Esse servidor é capaz de realizar as funções necessárias para o projeto:
 1. Prover arquivos HTML, CSS e Javascript
 2. Enviar e receber requisições HTTP, transferindo dados JSON
 
-Ao iniciar o programa, o ESP32 fica preparado para receber requisições de dados no endereço: 
+O ESP32 é conectado a uma rede Wi-Fi e ao iniciar o programa, o ESP32 fica preparado para receber requisições de dados no endereço: 
 http://ip_do_ESP32_na_rede/valor
 
-A página web (medidor.html) ao ser acessada pelo usuário, inicialmente não realiza requisições. Ao acionar o botão on/off na página, a mesma inicia o envio de requisições HTTP para o endereço supramencionado do ESP32 e ao receber os dados da medição instantânea do sensor, os adiciona ao gráfico de linha central na página.
+Qualquer outro dispositivo na mesma rede pode realizar requisições a esse endereço e obter um dado de medição instantânea do sensor. 
 
-Mais abaixo é é detalhado os principais pontos e arquivos.
+A página web (medidor.html) ao ser acessada pelo usuário em outro dispositivo no endereço: http://ip_do_ESP32_na_rede/medidor.html, inicialmente não realiza requisições. Ao acionar o botão on/off na página, a mesma inicia o envio de requisições HTTP para o endereço supramencionado do ESP32 e ao receber os dados da medição instantânea do sensor, os adiciona ao gráfico de linha central na página.
 
-![Página inicial do projeto](assets/Screenshot_20231208_195526.png)
+Além disso, a página permite que um limite de corrente seja definido pelo usuário. Ao detectar que o limite foi excedido, a página web envia uma requisição para 
+http://ip_do_ESP32_na_rede/estado, solicitando que a medição seja enterrompida. O ESP32 então desliga o circuíto com o relé.
+
+O relé tembém pode ser acionado pelo mesmo esquema de comunicação quando o usuário interage com o botão On/Off no topo da página.
+
+### Esquema de comunicação
+
 
 ### Software - ./www/medidor.html
 
-Contém página web contendo como principais elementos: botão on/off, que quando on realiza a medição de corrente através dos sensores. Gráfico com a medição de corrente produzido através da biblioteca anychart (ver mais em: https://www.anychart.com/). Link para o github do projeto (https://github.com/rodrigo-birocchi/ESP32-medidor-eletricidade).
+Contém a página web com os principais elementos: botão on/off, que quando ligado realiza a medição de corrente através do sensore. Gráfico com a medição de corrente produzido através da biblioteca AnyChart (ver mais em: https://www.anychart.com/). Link para o github do projeto (https://github.com/rodrigo-birocchi/ESP32-medidor-eletricidade).
+
+![Página inicial do projeto](assets/inicial.png)
 
 ### Software - ./www/script.js
 
-Arquivo responsável pela inclusão do gráfico e sua atualização na interface. Inclui também chamada a API, que por sua vez retorna a medição. No método window.setInterval(), é possível configurar a frequência de medição em milissegundos.
+Arquivo responsável pela inclusão do gráfico e sua atualização na interface. Realiza chamadas periódicas ao ESP32 com o método window.setInterval(). É possível configurar a frequência de medição em milissegundos por essa função.
 
 ### Software - ./ACS721/current_sensor.py
 
@@ -82,6 +97,6 @@ Escrito em python contém de fato a medição e gestão do sensor.
 
 leitura(): realiza a leitura analógica, conforme o datasheet do sensor.
 
-auto_zero(): encontra o zero do sensor, isto é, ausência de corrente.
+auto_zero(): encontra o zero do sensor, isto é, valor medido com ausência de corrente.
 
 valor(): retorna corrente em ampéres, conforme especificações acima.
