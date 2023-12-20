@@ -100,3 +100,14 @@ leitura(): realiza a leitura analógica, conforme o datasheet do sensor.
 auto_zero(): encontra o zero do sensor, isto é, valor medido com ausência de corrente.
 
 valor(): retorna corrente em ampéres, conforme especificações acima.
+
+### Software - ./relay/relay.py
+
+Também escrito em python, responsável pela interação com o relay.
+
+Utilizando o pino 26 do ESP32, manda comando para ligar e desligar.
+
+on(): manda sinal 0 para ligar.
+
+off(): manda sinal 1 para desligar.
+
