@@ -19,7 +19,7 @@ def auto_zero():
     
     print("Pronto")
     print("CAL: ", media)
-    return 1492
+    return media
 
 # Faz a leitura do valor atual da corrente
 def valor():

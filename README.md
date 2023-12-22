@@ -100,19 +100,21 @@ Escrito em python contém de fato a medição e gestão do sensor.
 leitura(): realiza a leitura analógica, conforme o datasheet do sensor.
 
 auto_zero(): encontra o zero do sensor, isto é, valor medido com ausência de corrente.
+Essa função deve encontrar um valor próximo do valor esperado empiricamente (1492 ~ 1650) para que o sensor esteja funcionando corretamente. Caso o valor encontrado seja muito alto ou muito baixo, é provavel que haja algo de errado com a montegem do circuito. Além disso, caso o valor encontrado não seja correto a medição mostrada não ficará próxima de 0.0A mesmo sem carga alguma no circuito.
 
 valor(): retorna corrente em ampéres, conforme especificações acima.
+Obtém a diferença entre a medição atual e o zero do sensor, ou seja, o quanto a medida do sensor se afastou do zero por conta da corrente que está sendo medida. Então o valor é dividido pela variação indicada pela folha de especificações do ACS712 (185mV/A ou 122mV/A com o divisor de corrente), pois para cada 1A de variação na corrente, há um aumento de 185mV na saída do sensor.
 
 ### Software - ./relay/relay.py
 
 Também escrito em python, responsável pela interação com o relay.
 
-Utilizando o pino 26 do ESP32, manda comando para ligar e desligar.
+Utilizando o pino 26 do ESP32, manda comandos para ligar e desligar.
 
-on(): manda sinal 0 para ligar.
+on(): Liga o relé
 
-off(): manda sinal 1 para desligar.
+off(): Desliga o relé
 
 ### Software - ./network_credentials.py
 
-Nesse arquivo, devem ser preenchidas as credenciais da rede Wi-Fi desejada.
+Nesse arquivo devem ser preenchidas as credenciais da rede Wi-Fi desejada.
